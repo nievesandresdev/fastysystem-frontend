@@ -1,0 +1,25 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.content {
+  background-color: var(--ss-gray-1);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.overlay.show .content {
+  transform: translateY(0);
+}

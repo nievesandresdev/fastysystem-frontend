@@ -1,0 +1,199 @@
+:root{
+    --ss-black-1:#333;
+    --ss-blue-1:#0A9396;
+    --ss-blue-2:#005F73;
+    --ss-yellow-1:#ffffef;
+    --ss-yellow-2:#f9f9c8;
+    --ss-orange-1:#F4A261;
+    --ss-red-1:#E76F51;
+    --ss-gray-1:#cfcfcf;
+    --ss-gray-2:#bfbfbf;
+    --ss-gray-3:#858383;
+}
+
+/*
+**
+****
+*****Black colors
+****
+**
+*/
+h1,h2,h3,h4,h5,label{
+    color:var(--ss-black);
+}
+
+/*
+**
+****
+*****blue colors
+****
+**
+*/
+
+.bg-blue-1{
+    background-color: var(--ss-blue-1);
+}
+
+.hover-bg-blue-1:hover,
+.bg-blue-1{
+    background-color: var(--ss-blue-1);
+}
+
+.hover-text-blue-1:hover,
+.text-blue-1{
+    color: var(--ss-blue-1);
+}
+
+.hover-text-blue-2:hover,
+.text-blue-2{
+    color: var(--ss-blue-2);
+}
+
+.hover-bg-blue-2:hover,
+.bg-blue-2{
+    background-color: var(--ss-blue-2);
+}
+
+/*
+**
+****
+*****blue colors
+****
+**
+*/
+
+.bg-yellow-1{
+    background-color: var(--ss-yellow-1);
+}
+
+.hover-bg-yellow-1:hover{
+    background-color: var(--ss-yellow-1);
+}
+
+.text-yellow-1{
+    color: var(--ss-yellow-1);
+}
+
+.border-yellow-1{
+    border-color: var(--ss-yellow-1);
+}
+/*
+**
+****
+*****red colors
+****
+**
+*/
+
+.text-red-1{
+    color: var(--ss-red-1);
+}
+
+.hover-text-red-1:hover{
+    color: var(--ss-red-1);
+}
+
+.bg-red-1{
+    background-color: var(--ss-red-1);
+}
+
+.hover-bg-red-1:hover{
+    background-color: var(--ss-red-1);
+}
+/*
+**
+****
+*****orange colors
+****
+**
+*/
+
+.text-orange-1{
+    color: var(--ss-orange-1);
+}
+
+.bg-orange-1{
+    background-color: var(--ss-orange-1);
+}
+
+.hover-bg-orange-1:hover{
+    background-color: var(--ss-orange-1);
+}
+/*
+**
+****
+*****black colors
+****
+**
+*/
+
+.text-black-1{
+    color: var(--ss-black-1);
+}
+
+.bg-black-1{
+    background-color: var(--ss-black-1);
+}
+
+.hover-bg-black-1:hover{
+    background-color: var(--ss-black-1);
+}
+
+.border-black-1{
+    border-color: var(--ss-black-1);
+}
+/*
+**
+****
+*****gray colors
+****
+**
+*/
+
+.text-gray-1{
+    color: var(--ss-gray-1);
+}
+
+.bg-gray-1{
+    background-color: var(--ss-gray-1);
+}
+
+.hover-bg-gray-1:hover{
+    background-color: var(--ss-gray-1);
+}
+
+.border-gray-1{
+    border-color: var(--ss-gray-1);
+}
+
+.text-gray-2{
+    color: var(--ss-gray-2);
+}
+
+.bg-gray-2{
+    background-color: var(--ss-gray-2);
+}
+
+.hover-bg-gray-2:hover{
+    background-color: var(--ss-gray-2);
+}
+
+.border-gray-2{
+    border-color: var(--ss-gray-2);
+}
+
+.text-gray-3{
+    color: var(--ss-gray-3);
+}
+
+.bg-gray-3{
+    background-color: var(--ss-gray-3);
+}
+
+.hover-bg-gray-3:hover{
+    background-color: var(--ss-gray-3);
+}
+
+.border-gray-3{
+    border-color: var(--ss-gray-3);
+}

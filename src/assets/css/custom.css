@@ -1,0 +1,51 @@
+
+
+/* body{
+    background-color: #ebebeb;
+} */
+
+/* 
+*{
+  font-family: "Montserrat", sans-serif;
+} */
+
+input,select{
+    border: 2px solid var(--ss-black-1);
+    background-color: var(--ss-yellow-1);
+    border-radius: 4px;
+}
+
+input[type="text"],select{
+    width: 100%;
+}
+
+input:focus-visible,select:focus-visible{
+  outline: none;
+}
+
+input:focus,input:hover{
+    background-color: var(--ss-yellow-2);
+}
+
+.shadow-1{
+  box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled{
+    background-color: var(--ss-gray-2) !important;
+    color: var(--ss-gray-3) !important;
+}
+
+input:disabled{
+    background-color: var(--ss-gray-1);
+}
+
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner {
+  -moz-appearance: textfield; /* Firefox */
+}
