@@ -63,4 +63,8 @@ export function deleteProductApi(id: number) {
   return del<Product>(`${path}/delete/${id}`);
 }
 
+export function searchProductApi( search: string ) {
+  return get<ProductWithUnit[]>(path+"/searchProduct", {search}); 
+}
+
 

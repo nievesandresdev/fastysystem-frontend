@@ -5,18 +5,17 @@ import { ArrowRightIcon } from '@heroicons/react/24/solid'
 import { TrashIcon } from '@heroicons/react/24/solid'
 import { ListBulletIcon } from '@heroicons/react/24/solid'
 import { useAppSelector, useAppDispatch } from "@/hooks/store";
-
+//
+import { SearchProduct } from "@/components/Product";
 export default function Invoice(){
     const { data: client, loading, error: clientError } = useAppSelector((s) => s.client);
     return(    
         <section className="bg-gray-1 py-2 border-t-3 border-yellow-1">
             <div className="relative pb-3 px-4">
-                <label className="text-sm font-semibold">Buscar productos</label>
-                <input type="text" placeholder="Buscar..." className="h-9 text-base pl-8" />
+                <SearchProduct />
                 <MagnifyingGlassIcon className="size-6 absolute bottom-5 left-6"/>
             </div>
-            <div className="bg-gray-2 mt-1 overflow-auto" style={{ height:'calc(100vh - 175px)' }}>
-                {client?.id}
+            <div className="bg-gray-2 mt-1 overflow-auto" style={{ height:'calc(100vh - 183px)' }}>
                 <ContentInvoce client={client} />
             </div>
         </section>
