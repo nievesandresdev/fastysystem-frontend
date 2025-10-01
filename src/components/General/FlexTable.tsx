@@ -18,6 +18,7 @@ type FlexTableProps<T> = {
   selectRowFn?: (id: number) => void;
   currentPage?: number;
   numRows?: number;
+  hoverSelect?: boolean;
 };
 
 export default function FlexTable<T extends object>({
@@ -29,8 +30,13 @@ export default function FlexTable<T extends object>({
   selectedRow = null,
   selectRowFn,
   currentPage = 1,
-  numRows = 10
+  numRows = 10,
+  hoverSelect = true
 }: FlexTableProps<T>) {
+
+  const hoverClass = hoverSelect ? 'group-hover:bg-zinc-400' : '';
+  const cursorClass = hoverSelect ? 'cursor-pointer' : '';
+  
   return (
     <div className="flex-table">
       {/* Header */}
@@ -58,14 +64,14 @@ export default function FlexTable<T extends object>({
         return (
           <div key={rowIndex} className={`${rowClassName} group`} onClick={() => selectRowFn?.(item.id)}>
             <div
-              className={`text-lg border-x p-1 text-center uppercase w-[3%] ${isSelected ? 'bg-red-400' : 'group-hover:bg-zinc-400'} cursor-pointer`}
+              className={`text-lg border-x p-1 text-center uppercase w-[3%] ${isSelected ? 'bg-red-400' : hoverClass} ${cursorClass}`}
             >
               {(currentPage - 1) * numRows + (rowIndex + 1)}
             </div>
             {columns.map((col, colIndex) => (
               <div
                 key={colIndex}
-                className={`text-lg border-x p-1 uppercase text-center ${isSelected ? 'bg-red-400' : 'group-hover:bg-zinc-400'} cursor-pointer ${col.className ?? ""}`}
+                className={`text-lg border-x p-1 uppercase text-center ${isSelected ? 'bg-red-400' : hoverClass} ${cursorClass} ${col.className ?? ""}`}
               >
                 {col.render ? col.render(item) : (item[col.key as keyof T] as any)}
               </div>

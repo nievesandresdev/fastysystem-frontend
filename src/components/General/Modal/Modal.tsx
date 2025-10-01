@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import '../css/Modal.css'
 import { XCircleIcon } from '@heroicons/react/24/solid'
 
@@ -28,6 +28,20 @@ export default function Modal({ isOpen, onClose, title, styles = stylesDefault, 
       onClose();
     }
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [isOpen, onClose]);
   
   return (
     <div className={`overlay ${isOpen ? "show z-[2000]" : ""}`} onMouseDown={handleOverlayClick}>

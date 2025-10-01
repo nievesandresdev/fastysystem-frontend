@@ -3,8 +3,10 @@ import { XCircleIcon } from '@heroicons/react/24/solid'
 import { DocumentPlusIcon } from '@heroicons/react/24/solid'
 //
 import { useState } from 'react'
+import useHotkey from "@/hooks/useHotkey.ts";
 import { useAppSelector, useAppDispatch } from "@/hooks/store";
-import { updateField } from "@/stores/client/clientSlice";
+import { updateField, resetClientForm } from "@/stores/client/clientSlice";
+import { clearSale } from "@/stores/sale/saleSlice";
 import { saveClient } from '@/stores/client/clientActions.ts';
 import { toast } from "react-toastify";
 
@@ -16,7 +18,11 @@ import TotalsCard from './TotalsCard';
 
 export default function RightPanel(){
     const dispatch = useAppDispatch();
-    const { data: clientForm, loading, error: clientError, original } = useAppSelector((s) => s.client);
+    useHotkey("F4", () => itemslist.length ? setIsOpen(true) : "");
+    useHotkey("F8", () => itemslist.length || clientForm?.id ? cancelSale() : "");
+
+    const { data: clientForm, error: clientError, original } = useAppSelector((s) => s.client);
+    const { items: itemslist} = useAppSelector((s) => s.sale);
     const [isOpen, setIsOpen] = useState(false);
     //
     //*
@@ -24,8 +30,6 @@ export default function RightPanel(){
     //*
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        console.log('test name',name);
-        console.log('test value',value);
         dispatch(updateField({ name, value }));
     };
 
@@ -38,34 +42,39 @@ export default function RightPanel(){
             toast.error(clientError);
         }
     };
+
+    const cancelSale = () => {
+        dispatch(clearSale());
+        dispatch(resetClientForm());
+        toast.success("Venta cancelada!");
+    };
     return (
         <>
         <div className="w-[360px] border-white border-3 bg-gray-1">
             <TotalsCard />
             <IdentifyClient 
-                formData={clientForm} 
                 onChange={handleChange} 
-                loading={loading} 
                 onSubmit={handleSubmit} 
-                copyForm={original}
             />
             <div className="p-4">
                 <div className="">
                     <button 
                         className="bg-blue-1 py-2 rounded-[4px] text-yellow-1 w-full flex items-center gap-2 justify-center cursor-pointer hover-bg-black-1"
                         onClick={() => setIsOpen(true)}
+                        disabled={!itemslist.length}
                     >
                         <DocumentPlusIcon className="size-7 text-yellow-1"/>
-                         PAGAR DE DOS FORMAS
+                         PAGAR <span className="font-bold">( F4 )</span>
                     </button>
-                    <button className="bg-red-1 py-2 rounded-[4px] text-yellow-1 w-full flex items-center gap-2 justify-center cursor-pointer hover-bg-black-1 mt-2">
+                    <button 
+                        className="bg-red-1 py-2 rounded-[4px] text-yellow-1 w-full flex items-center gap-2 justify-center cursor-pointer hover-bg-black-1 mt-2"
+                        disabled={!itemslist.length && !clientForm.id}
+                        onClick={()=> cancelSale()}
+                    >
                         <XCircleIcon className="size-7 text-yellow-1"/>
-                         CANCELAR VENTA
+                         CANCELAR VENTA <span className="font-bold">( F8 )</span>
                     </button>
-                    <button className="bg-blue-2 py-2 rounded-[4px] text-yellow-1 w-full flex items-center gap-2 justify-center mt-2 cursor-pointer hover-bg-black-1">
-                        <BookmarkSquareIcon className="size-7 text-yellow-1"/>
-                         REALIZAR VENTA
-                    </button>
+                    
                 </div>
             </div>
         </div>

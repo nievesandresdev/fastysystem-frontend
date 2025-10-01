@@ -81,6 +81,10 @@ export default function ProductList() {
             setDataEdit(dataSelected);
         }
     }, [selectedRow]);
+    // cargar productos al montarse la vista
+    useEffect(() => {
+        refetch(); 
+    }, []);
     //
     //*
     //Methods
@@ -207,7 +211,6 @@ export default function ProductList() {
                 </div>
             </div>
             <div className="px-4 pt-1" style={{minHeight: "calc(100vh - 250px)"}}>
-                {/* priceCExchange,priceCLocal,priceRExchange,priceRLocal */}
                 <FlexTable
                     columns={[
                         { 

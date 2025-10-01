@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './auth/authSlice';
 import exchangeReducer from './exchange/exchangeSlice';
 import clientReducer from './client/clientSlice';
+import saleReducer from './sale/saleSlice';
 
 export const store = configureStore({ 
     reducer: {
         auth: authReducer,
         exchange: exchangeReducer,
-        client: clientReducer
+        client: clientReducer,
+        sale: saleReducer
     } 
 });
 

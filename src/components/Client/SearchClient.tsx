@@ -2,7 +2,7 @@ import { useApiQuery } from '@/hooks/useApi';
 import { type ClientForm } from '@/api/client.service.ts';
 import { searchClientApi } from '@/api/client.service.ts';
 import { useAppSelector, useAppDispatch } from "@/hooks/store";
-import { updateField } from "@/stores/client/clientSlice";
+import { updateField, deleteId } from "@/stores/client/clientSlice";
 import { useState, useEffect } from 'react'
 //
 import { InputText } from "@/components/General";
@@ -13,8 +13,10 @@ interface searchProps {
 }
 export default function SearchClient({ value, onChange}:searchProps){
     const dispatch = useAppDispatch();
+    const { data: clientForm } = useAppSelector((s) => s.client);
+
     const { data, loading } = useApiQuery<ClientForm[]>(() => searchClientApi(value),[value],{ debounce: 500 });
-    const [isResultsOpen, setIsResultsOpen] = useState(true);
+    const [isResultsOpen, setIsResultsOpen] = useState(false);
     const clients = data?.data;
 
     useEffect(()=>{
@@ -22,12 +24,18 @@ export default function SearchClient({ value, onChange}:searchProps){
     },[value])
 
     const assignData = (client):void =>{
-        setIsResultsOpen(false)
-        dispatch(updateField({ name:'id', value: client?.id }));
         dispatch(updateField({ name:'document', value: client?.document }));
+        dispatch(updateField({ name:'id', value: client?.id }));
         dispatch(updateField({ name:'name', value: client?.name }));
         dispatch(updateField({ name:'lastname', value: client?.lastname }));
         dispatch(updateField({ name:'phone', value: client?.phone }));
+        setTimeout(() => {
+            setIsResultsOpen(false)    
+        }, 200);
+    }
+
+    const deleteClientId = (client):void =>{
+        dispatch(deleteId());
     }
     return (
         <div className="relative">
@@ -35,10 +43,11 @@ export default function SearchClient({ value, onChange}:searchProps){
                 label="Cedula de Identidad" 
                 name="document"
                 type="number"
-                extraClassInput="no-spinner"
+                extraClassInput={`${clientForm.id ? 'bg-gray-1':''} no-spinner`}
                 value={value}
                 onChange={onChange}
                 placeholder="Ej: 12123123"
+                onFocus={()=> deleteClientId()}
             />
             <div className="bg-zinc-100 w-full top-15 left-0 absolute z-[900] shadow-xl rounded-b-[4px]">
                 { isResultsOpen && clients?.length > 0 && clients.map((person)=>{

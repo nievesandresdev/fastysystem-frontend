@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, forwardRef } from "react";
 
 const defaultClassInput =
   "pl-2 pr-8 mt-1 block w-full border rounded-md shadow-sm h-9 focus:outline-none text-right";
@@ -16,21 +16,27 @@ type Props = {
   error?: boolean | string;    // false | true | "mensaje de error"
   coin?: number;          
   onChange: (e: ChangeEvent<HTMLInputElement>) => void; // SOLO event
+  onClick?: () => void;
 };
 
-export default function InputAmount({
-  label = null,
-  classInput = defaultClassInput,
-  extraClassInput = "",
-  classLabel = defaultClassLabel,
-  name = null,
-  value = "",
-  placeholder = "0.00",
-  disabled = false,
-  error = false,
-  coin = 'Bs', 
-  onChange,
-}: Props) {
+const InputAmount = forwardRef<HTMLInputElement, Props>(
+  (
+    {
+      label = null,
+      classInput = defaultClassInput,
+      extraClassInput = "",
+      classLabel = defaultClassLabel,
+      name = null,
+      value = "",
+      placeholder = "0.00",
+      disabled = false,
+      error = false,
+      coin = "Bs",
+      onChange,
+      onClick
+    }: Props,
+    ref 
+  ) => {
 
   // Convierte cualquier entrada a un monto con 2 decimales basado en dígitos
   // ""        -> ""  (permite vaciar y ver el placeholder)
@@ -82,6 +88,7 @@ export default function InputAmount({
 
     <div className="relative overflow-hidden">
         <input
+            ref={ref}
             type="text"
             name={name ?? ""}
             className={`${classInput} ${inputErrorClass} ${extraClassInput}`}
@@ -90,7 +97,14 @@ export default function InputAmount({
             placeholder={placeholder}
             disabled={disabled}
             autoComplete="off"
-            inputMode="numeric"           // teclado numérico en móviles
+            inputMode="numeric"
+            onClick={onClick}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                (e.currentTarget.form as HTMLFormElement)?.requestSubmit();
+              }
+            }}
         />
         <p className="absolute bg-zinc-300 top-[5.5px] right-[2px] py-[4.3px] px-1 rounded-[4px]">
             {coin}
@@ -101,4 +115,7 @@ export default function InputAmount({
       )}
     </div>
   );
-}
+});
+
+InputAmount.displayName = "InputAmount";
+export default InputAmount;

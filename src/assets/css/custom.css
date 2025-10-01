@@ -36,6 +36,10 @@ button:disabled{
     color: var(--ss-gray-3) !important;
 }
 
+button:disabled > svg{
+    color: var(--ss-gray-3) !important;
+}
+
 input:disabled{
     background-color: var(--ss-gray-1);
 }

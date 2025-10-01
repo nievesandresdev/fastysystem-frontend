@@ -38,6 +38,9 @@ const clientSlice = createSlice({
       state.original = initialForm;
       state.error = null;
     },
+    deleteId: (state) => {
+      state.data.id = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -63,5 +66,5 @@ const clientSlice = createSlice({
   },
 });
 
-export const { updateField, resetClientForm } = clientSlice.actions;
+export const { updateField, resetClientForm, deleteId } = clientSlice.actions;
 export default clientSlice.reducer;

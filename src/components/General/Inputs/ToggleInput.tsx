@@ -30,7 +30,7 @@ export default function ToggleInput({
     <div className="w-full">
       {label && <label className={defaultClassLabel}>{label}</label>}
 
-      <div className="mt-2 flex items-center">
+      <div className="mt-0.5 flex items-center">
         {/* Input oculto accesible */}
         <input
           type="checkbox"
@@ -45,7 +45,7 @@ export default function ToggleInput({
         {/* Switch visual */}
         <label
           htmlFor={name}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors
+          className={`relative inline-flex h-5 w-11 items-center rounded-full transition-colors
             ${value ? "bg-green-500" : "bg-gray-300"}
             ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
             ${inputErrorClass}
