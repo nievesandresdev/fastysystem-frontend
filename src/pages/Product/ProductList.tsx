@@ -24,20 +24,24 @@ export default function ProductList() {
     const [selectedRow, setSelectedRow] = useState<number | null>(null);
     const [dataEdit, setDataEdit] = useState<object | null>(null);
     // filters list
-    const [page, setPage] = useState(1)
-    const [perPage, setPerPage] = useState(8)
-    const [onlyActive, setOnlyActive] = useState(true)
-    const [latest, setLatest] = useState(false)
-    const [lowStock, setLowStock] = useState(false)
-    const [search, setSearch] = useState("")
-    const defaultFilters :ProductListFilters = {page: 1, perPage: 8, onlyActive: true, lowStock: false, latest: false, search: ""};
-    const filters :ProductListFilters = {page, perPage, onlyActive, lowStock, latest, search};
+    const [search, setSearch] = useState("");
+    const defaultFilters: ProductListFilters = {
+    page: 1,
+    perPage: 8,
+    onlyActive: true,
+    lowStock: false,
+    latest: false,
+    search: ""
+    };
+    const [filters, setFilters] = useState<ProductListFilters>(defaultFilters);
+
     //
     //*
     //async
     //*
     const { data: units, loading, error } = useApiQuery<MeasurementUnit[]>(() => getMeasurementUnitsApi());
-    const { data: products, loading : productsLoading, error: productsError, refetch } = useApiQuery<ProductWithUnit[]>(() => getAllProductsApi(filters), [page, perPage, onlyActive, latest, lowStock, search]);
+    const { data: products, loading : productsLoading, error: productsError, refetch } = useApiQuery<ProductWithUnit[]>(() => getAllProductsApi(filters),[filters]);
+
     const { run, loading : loadDelete, error : deleteError } = useApiMutation(deleteProductApi);
     const someLoading = loading || productsLoading || loadDelete;
     //
@@ -47,20 +51,22 @@ export default function ProductList() {
     // debounce para search
     useEffect(() => {
         const delay = setTimeout(() => {
-            if (search.length >= 3) {
-                toggleFilter({ ...filters, search });
-            } else {
-                toggleFilter({ ...filters, search: "" });
-            }
+            setFilters(prev => ({
+            ...prev,
+            search: search.length >= 3 ? search : "",
+            page: 1
+            }));
         }, 400);
 
         return () => clearTimeout(delay);
     }, [search]);
+
+
+
     // obtener data de producto seleccionado
     useEffect(() => {
         // 
         let dataSelected = products?.data.data.find(p => p.id === selectedRow) || null;
-        // console.log('test dataSelected', dataSelected);
         if(dataSelected){
             dataSelected = {
                 id: dataSelected.id,
@@ -93,19 +99,20 @@ export default function ProductList() {
         setSelectedRow(id);
     }
 
-    const toggleFilter = (filtersParam):void =>{
-        setPerPage(filtersParam.perPage);
-        setOnlyActive(filtersParam.onlyActive);
-        setLowStock(filtersParam.lowStock);
-        setLatest(filtersParam.latest);
-        setPage(1);
-    }
+    const toggleFilter = (patch: Partial<ProductListFilters>) => {
+        setFilters(prev => ({ ...prev, ...patch, page: 1 }));
+    };
 
-    const restFilters = ():void =>{
-        toggleFilter(defaultFilters)
+    const restFilters = () => {
+        setFilters(defaultFilters);
         setSearch("");
         setSelectedRow(null);
-    }
+    };
+
+    const closeForm = () => {
+        setCreateProductModalOpen(false)
+        setSelectedRow(null)
+    };
 
     const reloadList = ():void =>{
         refetch();
@@ -164,16 +171,18 @@ export default function ProductList() {
                 <div className="h-full border-l-3 border-yellow-1 ml-auto px-4">
                     <h1 className="text-lg font-semibold">Ordenar por:</h1>
                     <div className="flex items-center gap-2 mt-1">
+                    {/* onClick={() => toggleFilter({...filters, latest: !latest})} */}
                         <button 
-                            className={`px-2 rounded-[4px] text-base py-1 font-semibold shadow-1 mt-auto cursor-pointer flex items-center justify-start gap-2 ${ !latest ? 'hover-bg-gray-2 bg-white' : 'bg-green-500 text-white'}`}
-                            onClick={() => toggleFilter({...filters, latest: !latest})}
+                            className={`px-2 rounded-[4px] text-base py-1 font-semibold shadow-1 mt-auto cursor-pointer flex items-center justify-start gap-2 ${ !filters.latest ? 'hover-bg-gray-2 bg-white' : 'bg-green-500 text-white'}`}
+                            onClick={() => toggleFilter({ latest: !filters.latest })}
                         >
                             <FolderArrowDownIcon className="size-6"/>
                             Ultimos
                         </button>
+                        {/* onClick={() => toggleFilter({...filters, lowStock: !lowStock})} */}
                         <button 
-                            className={`px-2 rounded-[4px] text-base py-1 font-semibold shadow-1 mt-auto cursor-pointer flex items-center justify-start gap-2 ${ !lowStock ? 'hover-bg-gray-2 bg-white' : 'bg-green-500 text-white'}`}
-                            onClick={() => toggleFilter({...filters, lowStock: !lowStock})}
+                            className={`px-2 rounded-[4px] text-base py-1 font-semibold shadow-1 mt-auto cursor-pointer flex items-center justify-start gap-2 ${ !filters.lowStock ? 'hover-bg-gray-2 bg-white' : 'bg-green-500 text-white'}`}
+                            onClick={() => toggleFilter({ lowStock: !filters.lowStock })}
                         >
                             <FolderMinusIcon className="size-6"/>
                             Poco Stock
@@ -243,13 +252,13 @@ export default function ProductList() {
                             )
                         },
                         {
-                            key: "stock", label: "STOCK", className: `w-[4%] ${lowStock ? 'bg-red-400' : 'bg-blue-100'}`,
+                            key: "stock", label: "STOCK", className: `w-[4%] ${filters.lowStock ? 'bg-red-400' : 'bg-blue-100'}`,
                         },
                         {
                             key: "minStock", label: <>MIN <br />STOCK</>, className: "w-[4%] bg-blue-100",
                         },
                         {
-                            key: "created_at", label: <>FECHA DE<br />REGISTRO</>, className: `w-[7%] ${latest ? 'bg-red-400' : 'bg-gray-100'}`, render: (p) => new Date(p.created_at).toLocaleDateString(),
+                            key: "created_at", label: <>FECHA DE<br />REGISTRO</>, className: `w-[7%] ${filters.latest ? 'bg-red-400' : 'bg-gray-100'}`, render: (p) => new Date(p.created_at).toLocaleDateString(),
                         },
                         {
                             key: "updated_at", label: <>ACTUALIZADO<br />EL</>, className: "w-[8%] bg-gray-100", render: (p) => new Date(p.updated_at).toLocaleDateString(),
@@ -263,8 +272,8 @@ export default function ProductList() {
                     isLoading={productsLoading}
                     selectedRow={selectedRow}
                     selectRowFn={selectRow}
-                    currentPage={page}
-                    numRows={perPage}
+                    currentPage={filters.page}
+                    numRows={filters.perPage}
                 />
             </div>
             {/* 🚀 Paginación abajo de la tabla */}
@@ -276,30 +285,33 @@ export default function ProductList() {
                     </h2>
                     <div className="border-l-3 border-yellow-1 flex gap-4 pl-2 ml-4 items-center">
                         <h2 className="text-base font-semibold">Productos por pagina:</h2>
+                        {/* onClick={() => toggleFilter({...filters, perPage:8})} */}
                         <button 
-                            className={`px-3 py-1 rounded cursor-pointer shadow ${perPage == 8 ? 'bg-green-500 text-white font-bold' : 'bg-gray-200 hover-bg-gray-2'}`}
-                            onClick={() => toggleFilter({...filters, perPage:8})}
+                            className={`px-3 py-1 rounded cursor-pointer shadow ${filters.perPage == 8 ? 'bg-green-500 text-white font-bold' : 'bg-gray-200 hover-bg-gray-2'}`}
+                            onClick={() => toggleFilter({ perPage: 8 })}
                         >
                             8 
                         </button>
+                        {/* onClick={() => toggleFilter({...filters, perPage:12})} */}
                         <button 
-                            className={`px-3 py-1 rounded cursor-pointer shadow ${perPage == 12 ? 'bg-green-500 text-white font-bold' : 'bg-gray-200 hover-bg-gray-2'}`}
-                            onClick={() => toggleFilter({...filters, perPage:12})}
+                            className={`px-3 py-1 rounded cursor-pointer shadow ${filters.perPage == 12 ? 'bg-green-500 text-white font-bold' : 'bg-gray-200 hover-bg-gray-2'}`}
+                            onClick={() => toggleFilter({ perPage: 12 })}
                         >
                             12
                         </button>
                     </div>
                     <div className="border-l-3 border-yellow-1 mr-auto ml-8 pl-4 flex gap-4">
+                        {/* onClick={() => toggleFilter({...filters, onlyActive:true})} */}
                         <button 
-                            className={`flex items-center font-semibold gap-2 px-2 py-1 rounded-md shadow cursor-pointer  ${ onlyActive ? 'bg-green-500 text-white':'bg-gray-200 hover-bg-gray-2'}`}
-                            onClick={() => toggleFilter({...filters, onlyActive:true})}
+                            className={`flex items-center font-semibold gap-2 px-2 py-1 rounded-md shadow cursor-pointer  ${ filters.onlyActive ? 'bg-green-500 text-white':'bg-gray-200 hover-bg-gray-2'}`}
+                            onClick={() => toggleFilter({ onlyActive:true })}
                         >
                             <CheckCircleIcon className="size-7 m-auto" />
                             Solo productos activos
                         </button>
                         <button 
-                            className={`flex items-center font-semibold gap-2 px-2 py-1 rounded-md shadow cursor-pointer  ${ !onlyActive ? 'bg-green-500 text-white':'bg-gray-200 hover-bg-gray-2'}`}
-                            onClick={() => toggleFilter({...filters, onlyActive:false})}
+                            className={`flex items-center font-semibold gap-2 px-2 py-1 rounded-md shadow cursor-pointer  ${ !filters.onlyActive ? 'bg-green-500 text-white':'bg-gray-200 hover-bg-gray-2'}`}
+                            onClick={() => toggleFilter({ onlyActive:false })}
                         >
                             <EqualsIcon className="size-7 m-auto" />  
                             Todos los productos
@@ -308,14 +320,14 @@ export default function ProductList() {
                     <Pagination
                         page={products.data.page}
                         totalPages={products.data.totalPages}
-                        onPageChange={setPage}
+                        onPageChange={(p) => setFilters(prev => ({ ...prev, page: p }))}
                     />
                 </div>
             )}
         </section>
         <ProductForm 
             isOpen={isCreateProductModalOpen} 
-            onClose={() => setCreateProductModalOpen(false)} 
+            onClose={() => closeForm()} 
             unitsData={units?.data}
             reloadList={reloadList}
             productToEdit={dataEdit}
