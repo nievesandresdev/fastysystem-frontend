@@ -8,6 +8,7 @@ export const saveSale = createAsyncThunk<
   { rejectValue: string }
 >("sale/saveSale", async (data, { rejectWithValue }) => {
   try {
+    console.log('data',data);
     const res = await saveSaleApi(data);
     return res.data;
   } catch (err: any) {

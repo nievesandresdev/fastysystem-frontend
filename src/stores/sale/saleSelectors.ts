@@ -8,7 +8,7 @@ export const totalLocal = createSelector(
   [saleItems],
   (items) =>
     items
-      .reduce((acc, item) => acc + item.qty * parseFloat(item.priceRLocal), 0)
+      .reduce((acc, item) => acc + item.qty * parseFloat(item.priceLocal), 0)
       .toFixed(2)
 );
 
@@ -16,6 +16,6 @@ export const totalExchange = createSelector(
   [saleItems],
   (items) =>
     items
-      .reduce((acc, item) => acc + item.qty * parseFloat(item.priceRExchange), 0)
+      .reduce((acc, item) => acc + item.qty * parseFloat(item.priceExchange), 0)
       .toFixed(2)
 );

@@ -27,6 +27,7 @@ export default function SearchProduct({ disabled = false, onProductSelect }:Prop
     },[searchValue])
 
     const handleSelectProduct = (product) => {
+        console.log('product',product)
         setIsResultsOpen(false)
         setSearchValue("")
         onProductSelect(product);

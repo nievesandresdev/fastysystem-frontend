@@ -31,13 +31,14 @@ export default function Invoice(){
     const onConfirmProduct = (quantity) =>{
         
         setIsConfirmAddItemOpen(false);
-        dispatch(addItem({ 
+        dispatch(addItem({
             id: productSelected.id, 
             codigo: productSelected.codigo, 
             name: productSelected.name, 
             stock: productSelected.stock, 
-            priceRLocal: productSelected.priceRLocal, 
-            priceRExchange: productSelected.priceRExchange, 
+            priceLocal: productSelected.priceRLocal, 
+            priceExchange: productSelected.priceRExchange, 
+            priceCExchange: productSelected.priceCExchange,
             qty: parseFloat(quantity),
             unitAbbreviation: productSelected.unitAbbreviation 
         }));
@@ -123,11 +124,11 @@ export function ContentInvoce({client, itemslist, loadingList}){
                     },
                     { 
                         key: "priceRLocal", label: "COSTO UNIDAD", className: "w-[16%] bg-gray-100",
-                        render: (p) => (<p className="text-base content-center text-right pr-1 h-full leading-4 font-bold">{p.priceRLocal} Bs</p>)
+                        render: (p) => (<p className="text-base content-center text-right pr-1 h-full leading-4 font-bold">{p.priceLocal} Bs</p>)
                     },
                     { 
                         key: "total", label: 'SUB-TOTAL', className: "w-[16%] bg-blue-100",
-                        render: (p) => (<p className="text-base content-center text-right pr-1 h-full leading-4 font-bold">{(parseFloat(p.priceRLocal).toFixed(2)*p.qty).toFixed(2)} Bs</p>)
+                        render: (p) => (<p className="text-base content-center text-right pr-1 h-full leading-4 font-bold">{(parseFloat(p.priceLocal).toFixed(2)*p.qty).toFixed(2)} Bs</p>)
                     },
                     { 
                         key: "-", label: '-', className: "w-[3.5%] bg-gray-100",

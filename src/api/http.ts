@@ -92,3 +92,5 @@ export const post = <T=any>(endpoint: string, body?: any, options?: AxiosRequest
   apiHttp<T>('POST', endpoint, body, options);
 export const put  = <T=any>(endpoint: string, body?: any, options?: AxiosRequestConfig) =>
   apiHttp<T>('PUT', endpoint, body, options);
+export const patch = <T=any>(endpoint: string, body?: any, options?: AxiosRequestConfig) =>
+  apiHttp<T>('PATCH', endpoint, body, options);

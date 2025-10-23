@@ -5,6 +5,7 @@ import reportRoutes from './report'
 import settingRoutes from './settings'
 import productRoutes from './product'
 import clousureRoutes from './clousure'
+import expenseRoutes from './expense'
 
 
 const router = createBrowserRouter([
@@ -13,7 +14,8 @@ const router = createBrowserRouter([
   ...reportRoutes,
   ...settingRoutes,
   ...productRoutes,
-  ...clousureRoutes
+  ...clousureRoutes,
+  ...expenseRoutes
 ]);
 
 

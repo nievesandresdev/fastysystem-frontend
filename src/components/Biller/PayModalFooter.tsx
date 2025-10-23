@@ -10,6 +10,7 @@ export default function Footer({ validSale, payments, change, onClose }) {
    const dispatch = useAppDispatch();
   const { data: client } = useAppSelector((s) => s.client);
   const { items: itemslist } = useAppSelector((s) => s.sale);
+  const { current: currExchange } = useAppSelector((s) => s.exchange);
 
   const totalLocalValue = useAppSelector(totalLocal);
   const totalExchangeValue = useAppSelector(totalExchange);
@@ -17,6 +18,7 @@ export default function Footer({ validSale, payments, change, onClose }) {
   const handleSave = () => {
     dispatch(saveSale({
       clientId: client?.id ?? null,
+      exchangeId: currExchange?.id ?? 0,
       itemslist,
       payments,
       change,

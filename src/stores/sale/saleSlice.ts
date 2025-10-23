@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, isAnyOf } from "@reduxjs/toolkit";
-import { type SaleItem, type SaleState, saveSale } from "./saleActions";
+import { saveSale } from "./saleActions";
+import { type SaleItem, type SaleState } from "@/api/sale.service.ts";
 
 const initialState: SaleState = {
   items: [],
