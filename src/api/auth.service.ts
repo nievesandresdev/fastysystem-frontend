@@ -7,8 +7,13 @@ export interface LoginData {
 }
 export interface AuthResponse {
   ok: boolean;
-  token: string;
-  user: { id: number; username: string; email: string };
+  status: number;
+  code: string;
+  message: string;
+  data: {
+    user: { id: number; username: string; email: string; roles: { id: number; name: string }[] };
+    token: string;
+  };
 }
 
 const path = "/auth";

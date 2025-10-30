@@ -14,7 +14,7 @@ type Props = {
   placeholder?: string;
   disabled?: boolean;
   error?: boolean | string;    // false | true | "mensaje de error"
-  coin?: number;          
+  coin?: string;          
   onChange: (e: ChangeEvent<HTMLInputElement>) => void; // SOLO event
   onClick?: () => void;
 };

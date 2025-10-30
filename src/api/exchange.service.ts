@@ -25,8 +25,16 @@ export interface ExchangeData {
 
 const path = "/exchange";
 
+export interface CoinsResponse {
+  ok: boolean;
+  status: number;
+  code: string;
+  message: string;
+  data: Coin[];
+}
+
 export function getCoinsApi() {
-  return get<Coin[]>(path+"/getCoins");
+  return get<CoinsResponse>(path+"/getCoins");
 }
 
 export function createApi( data: { exchange: number, coinId: number } ) {

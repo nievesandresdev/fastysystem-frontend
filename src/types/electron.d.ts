@@ -6,6 +6,10 @@ declare global {
       getToken: () => Promise<string | null>;
       setToken: (t: string) => Promise<void>;
       clear: () => Promise<void>;
+      getUserRoles: () => Promise<string[]>;
+      setUserRoles: (roles: string[]) => Promise<void>;
+      getUser: () => Promise<any | null>;
+      setUser: (user: any) => Promise<void>;
     };
   }
 }

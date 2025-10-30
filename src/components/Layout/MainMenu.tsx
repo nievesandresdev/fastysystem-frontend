@@ -9,8 +9,10 @@ import {
     DocumentMinusIcon
 } from '@heroicons/react/24/solid'
 //
-import { useLocation, Link } from 'react-router-dom'
-import { useAppSelector } from '@/hooks/store';
+import { useLocation, Link, useNavigate } from 'react-router-dom'
+import { useAppSelector, useAppDispatch } from '@/hooks/store';
+import { logout } from '@/stores/auth/authSlice';
+import { AUTH_ROUTES } from '@/routes/names';
 import { 
     REPORT_ROUTES,
     BILLER_ROUTES,
@@ -24,9 +26,27 @@ import {
 
 export default function MainMenu(){
     const location = useLocation();
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const currentPath = location.pathname;
-    const { user } = useAppSelector(s => s.auth);
     const { current: currExchange} = useAppSelector(s => s.exchange);
+    const { user } = useAppSelector(s => s.auth);
+    // Obtener roles del usuario desde Redux
+    const hasAdminRole = user?.roles?.includes('admin') || false;
+    const handleLogout = async () => {
+        try {
+            // Limpiar authVault (token y roles)
+            await window.authVault?.clear?.();
+            
+            // Dispatch logout action
+            dispatch(logout());
+            
+            // Navegar al login
+            navigate(AUTH_ROUTES.LOGIN, { replace: true });
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+        }
+    };
     
     return (
         <div className="flex-grow bg-gray-1">
@@ -45,13 +65,15 @@ export default function MainMenu(){
                     <NumberedListIcon className="size-8 mx-auto text-yellow-1" />
                     <h1 className="text-xs font-semibold text-yellow-1">FACTURAR</h1>
                 </Link>
-                <Link 
-                    className={`${currentPath == SETTING_ROUTES.ROOT ? 'bg-orange-1' : 'bg-blue-1'} w-20 hover-bg-orange-1 shadow-1 rounded-[4px] py-1.5 text-center cursor-pointer`}
-                    to={SETTING_ROUTES.ROOT}
-                >
-                    <Cog6ToothIcon className="size-8 mx-auto text-yellow-1" />
-                    <h1 className="text-xs font-semibold text-yellow-1">CONFIG</h1>
-                </Link>
+                {hasAdminRole && (
+                    <Link 
+                        className={`${currentPath == SETTING_ROUTES.ROOT ? 'bg-orange-1' : 'bg-blue-1'} w-20 hover-bg-orange-1 shadow-1 rounded-[4px] py-1.5 text-center cursor-pointer`}
+                        to={SETTING_ROUTES.ROOT}
+                    >
+                        <Cog6ToothIcon className="size-8 mx-auto text-yellow-1" />
+                        <h1 className="text-xs font-semibold text-yellow-1">CONFIG</h1>
+                    </Link>
+                )}
                 <Link 
                     className={`${currentPath == PRODUCT_ROUTES.ROOT ? 'bg-orange-1' : 'bg-blue-1'} w-20 hover-bg-orange-1 shadow-1 rounded-[4px] py-1.5 text-center cursor-pointer`}
                     to={PRODUCT_ROUTES.ROOT}
@@ -78,7 +100,7 @@ export default function MainMenu(){
                     (
                     <div className="flex-grow flex justify-start gap-2">
                         <div className="bg-black-1 rounded-[4px] px-2">
-                            <h1 className="text-xs text-yellow-1 font-bold pt-1">Cotizacion del <br/>Dia:</h1>
+                            <h1 className="text-xs text-yellow-1 font-bold pt-1">Cotizacion <br/> actual:</h1>
                             <h1 className="text-lg text-yellow-1 font-bold text-right">{currExchange?.exchange.toFixed(2)} Bs</h1>
                         </div>
                         <div className="bg-red-1 rounded-[4px] py-2 px-2">
@@ -89,7 +111,10 @@ export default function MainMenu(){
                     </div>
                     )
                 }
-                <button className="text-base font-semibold text-blue-600 hover:bg-gray-200 cursor-pointer mt-auto mr-1 bg-blue-100 p-1.5 rounded-md flex items-center gap-1">
+                <button 
+                    className="text-base font-semibold text-blue-600 hover:bg-gray-200 cursor-pointer mt-auto mr-1 bg-blue-100 p-1.5 rounded-md flex items-center gap-1"
+                    onClick={handleLogout}
+                >
                     <ArchiveBoxXMarkIcon className="size-6 mx-auto" />
                     Cerrar sesion
                 </button>

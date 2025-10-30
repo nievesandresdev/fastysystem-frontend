@@ -7,7 +7,9 @@ export { default as FastyButton } from './Buttons/FastyButton';
 export { default as InputText } from './Inputs/InputText';
 export { default as SelectInput } from './Inputs/SelectInput';
 export { default as InputAmount } from './Inputs/InputAmount';
+export { default as InputCheckbox } from './Inputs/InputCheckbox';
 export { default as ToggleInput } from './Inputs/ToggleInput';
+export { default as PermissionDeniedModal } from './PermissionDeniedModal';
 
 export { default as MsgError } from './MsgError';
 export { default as Modal } from './Modal/Modal';

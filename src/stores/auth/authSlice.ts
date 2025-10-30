@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { loginUser, type User } from './authActions'; // Importa el thunk que has creado
+import { loginUser, type User } from './authActions';
 type AuthState = { user: User|null; token: string|null; loading: boolean; error: string|null }
-const initialState: AuthState = { user: null, loading: false, error: null };
+const initialState: AuthState = { user: null, token: null, loading: false, error: null };
 
 const authSlice = createSlice({
   name: 'auth',
@@ -16,6 +16,17 @@ const authSlice = createSlice({
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
+    },
+    loadUser(state, action: PayloadAction<{ user: User; token: string } | null>) {
+      if (action.payload) {
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+      } else {
+        state.user = null;
+        state.token = null;
+      }
+      state.loading = false;
+      state.error = null;
     },
     logout(state){ 
       state.user=null; state.token=null; state.error=null; 
@@ -37,5 +48,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setError, setLoading, logout } = authSlice.actions;
+export const { setUser, setError, setLoading, loadUser, logout } = authSlice.actions;
 export default authSlice.reducer;

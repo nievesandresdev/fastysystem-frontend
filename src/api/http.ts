@@ -24,20 +24,35 @@ export const http = axios.create({
 http.interceptors.request.use(async (config) => {
   const tokenFromVault = await window.authVault?.getToken?.();
   const token = tokenFromVault ?? null;
+  
   if (token) {
     config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
   }
+
+  // Agregar roles del usuario en headers
+  const userRoles = await window.authVault?.getUserRoles?.();
+  if (userRoles && userRoles.length > 0) {
+    config.headers = { ...config.headers, 'X-User-Roles': userRoles.join(',') };
+  }
+
   return config;
 });
 
 // --- callback registrable desde la app ---
 let onUnauthorized: VoidFunction | undefined;
+let onPermissionDenied: ((message?: string) => void) | undefined;
+
 export const setOnUnauthorized = (fn: VoidFunction) => { onUnauthorized = fn; };
+export const setOnPermissionDenied = (fn: (message?: string) => void) => { onPermissionDenied = fn; };
 
 http.interceptors.response.use(r => r, async (err) => {
   if (err?.response?.status === 401) {
     await window.authVault?.clear?.();
     onUnauthorized?.();               // navega al login
+  } else if (err?.response?.status === 403) {
+    // Manejar error de permisos
+    const errorMessage = err?.response?.data?.error || 'No tienes permisos para realizar esta acción';
+    onPermissionDenied?.(errorMessage);
   }
   return Promise.reject(err);
 });

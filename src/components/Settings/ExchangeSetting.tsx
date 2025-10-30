@@ -3,15 +3,15 @@ import { InputAmount, CTAButton, SelectInput, MsgError } from "@/components/Gene
 import { BookmarkSquareIcon } from '@heroicons/react/24/solid'
 import { useState, useEffect } from "react";
 import { useApiQuery } from '@/hooks/useApi';
-import { Coin, getCoinsApi } from '@/api/exchange.service.ts'
+import { getCoinsApi, type Coin } from '@/api/exchange.service.ts'
 import { useAppDispatch, useAppSelector } from '@/hooks/store';
 import { saveExchange, findActive } from '@/stores/exchange/exchangeActions.ts';
+import { setIsExchangeSettingOpen } from '@/stores/exchange/exchangeSlice';
 import { toast } from "react-toastify";
 
 
 type ExchangeSettingProps = {  
     isOpen: boolean;
-    onClose: () => void;  
 };
 
 const initialForm = {
@@ -19,12 +19,12 @@ const initialForm = {
     exchange: "",
 };
 
-export default function ExchangeSetting({ isOpen, onClose}: ExchangeSettingProps) {   
+export default function ExchangeSetting({ isOpen }: ExchangeSettingProps) {   
     const dispatch = useAppDispatch();
-    const { current: currExchange, loading : loadExchange, error : errorExchange} = useAppSelector(s => s.exchange);
+    const { current: currExchange, error: exchangeError } = useAppSelector(s => s.exchange);
     const [formData, setFormData] = useState(initialForm);
-    
-    const { data: coinsList, loading, error } = useApiQuery<Coin[]>(() => getCoinsApi());
+    console.log('exchangeError', exchangeError);
+    const { data: coinsList } = useApiQuery(() => getCoinsApi());
     
     useEffect(() => {
         const load = async () => {
@@ -36,35 +36,52 @@ export default function ExchangeSetting({ isOpen, onClose}: ExchangeSettingProps
     },[])
 
     const coinsData = coinsList?.data;
-    const coinsOptions = coinsData?.length ? coinsData?.map(coin => ({
-        value: coin.id.toString(), 
+    const coinsOptions = coinsData?.length ? coinsData?.map((coin: any) => ({
+        value: String(coin.id), 
         label: `${coin.name} (${coin.abbreviation})` 
     })) : [];
     //OPTION DEFAULT
-    if(coinsOptions.length && !formData.coinId.trim()){
-        const defaultUnit = coinsOptions.find(unit => unit.label == "Dolar (USD)");
-        setFormData(prev => ({ ...prev, coinId: defaultUnit.value }));
-    }
+    useEffect(() => {
+        if(coinsOptions.length && !formData.coinId.trim()){
+            const defaultUnit = coinsOptions.find((unit) => unit.label === "Dolar (USD)");
+            if(defaultUnit){
+                setFormData(prev => ({ ...prev, coinId: defaultUnit.value }));
+            }
+        }
+    }, [coinsOptions.length]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const submit = async (): void => {
-        const data = { ...formData, coinId: Number(formData.coinId)};
-        const { meta, payload } = await dispatch(saveExchange(data));
+    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleClose = () => {
+        dispatch(setIsExchangeSettingOpen(false));
+    };
+
+    const submit = async (): Promise<void> => {
+        const data = { 
+            coinId: Number(formData.coinId), 
+            exchange: Number(formData.exchange) 
+        };
+        const { meta } = await dispatch(saveExchange(data));
 
         if (meta.requestStatus === 'fulfilled') {
             toast.success('Tasa actualizada correctamente');
-            onClose();
+            handleClose();
+            setFormData(initialForm);
         }
     };
     return (
     <ConfirmModal  
         isOpen={isOpen} 
         title={!currExchange ? "Crear tasa" : "Actualizar tasa"} 
-        onClose={onClose}
+        onClose={handleClose}
         contentClassName="min-w-[400px]"
     >
         <div>
@@ -75,19 +92,19 @@ export default function ExchangeSetting({ isOpen, onClose}: ExchangeSettingProps
                 value={formData.coinId}
                 options={coinsOptions}
                 placeholder="Selecciona una unidad"
-                onChange={handleChange}
+                onChange={handleSelectChange}
             />
             <div className="my-4"></div>
             <InputAmount 
                 label="Ganancia (porcentaje)" 
                 name="exchange"
                 value={formData.exchange}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 placeholder="30.00"
                 coin="Bs"
             />
         </div>
-        {/* {submitError && <MsgError message={submitError?.data?.data?.error?.message || 'Error el guardar'} />} */}
+        {exchangeError && <MsgError message={exchangeError} />}
         <div className="mt-4">
             <CTAButton 
                 extraClassName="ml-auto px-4 py-2 text-sm font-semibold"

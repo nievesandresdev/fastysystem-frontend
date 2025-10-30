@@ -40,7 +40,7 @@ export default function SelectInput({
         onChange={onChange}
       >
         {placeholder && (
-          <option value="" disabled>
+          <option key="placeholder" value="" disabled>
             {placeholder}
           </option>
         )}

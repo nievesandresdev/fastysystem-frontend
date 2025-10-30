@@ -1,14 +1,28 @@
-import { TrashIcon } from '@heroicons/react/24/solid';
 import { PencilSquareIcon } from '@heroicons/react/24/solid';
-import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { CurrencyDollarIcon } from '@heroicons/react/24/solid';
-// import { CreateUserModal } from '@/components/Users';
+import { FlexTable } from '@/components/General';
+import { CreateUserModal } from '@/components/Users';
 import { ConfirmDelete } from '@/components/General';
 import { useState } from 'react';
+import { getAllRolesApi } from '@/api/role.service';
+import { getAllUsersApi } from '@/api/user.service';
+import { useApiQuery } from '@/hooks/useApi';
+import { useAppDispatch } from '@/hooks/store';
+import { setIsExchangeSettingOpen } from '@/stores/exchange/exchangeSlice';
 
 export default function ListUsers(){
     const [isCreateUserModalOpen, setCreateUserModalOpen] = useState(false);
     const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [userToEdit, setUserToEdit] = useState<any>(null);
+    const dispatch = useAppDispatch();
+    
+    // Cargar roles desde la API
+    const { data: rolesResponse } = useApiQuery(getAllRolesApi);
+    const rolesData = rolesResponse?.data || [];
+
+    // Cargar usuarios desde la API
+    const { data: usersResponse, loading: usersLoading, refetch: reloadUsers } = useApiQuery(getAllUsersApi);
+    const usersData = usersResponse?.data || [];
 
     return (
         <>
@@ -17,6 +31,7 @@ export default function ListUsers(){
                 <h1 className="text-xl font-semibold">Lista de Usuarios</h1>
                 <button 
                     className="px-4 rounded-[4px] text-yellow-1 text-base py-3 font-semibold bg-blue-2 hover-bg-black-1 mt-auto cursor-pointer flex items-center gap-2 ml-auto"
+                    onClick={() => dispatch(setIsExchangeSettingOpen(true))}
                 >
                     <CurrencyDollarIcon className="size-6"/>
                     Actualizar tasa
@@ -30,32 +45,71 @@ export default function ListUsers(){
                 </button>
             </div>
             <div className="px-4 pt-1">
-                <div className="flex border-x pb-0.5">
-                    <div className="flex-grow text-base border-x px-1 font-bold text-center bg-white">NOMBRES</div>
-                    <div className="w-[28%] text-base border-x px-1 font-bold text-center bg-gray-100">CORREO</div>
-                    <div className="w-[16%] text-base border-x px-1 font-bold text-center bg-blue-100">USERNAME</div>
-                    <div className="w-[12%] text-base border-x px-1 font-bold text-center bg-orange-100">ROL(ES)</div>
-                    <div className="w-[14%] text-base border-x px-1 font-bold text-center bg-red-100">Acciones</div>
-                </div>
-                <div className="flex border-x">
-                    <div className="flex-grow text-base border-x px-1 font-bold text-center bg-white">ANDRES NIEVES</div>
-                    <div className="w-[28%] text-base border-x px-1 font-bold text-center bg-gray-100">ANDRES@EMAIL.COM</div>
-                    <div className="w-[16%] text-base border-x px-1 font-bold text-center bg-blue-100">ANDRESNIEVES</div>
-                    <div className="w-[12%] text-base border-x px-1 font-bold text-center bg-orange-100">
-                        ADMIN 
-                        VENDEDOR
-                    </div>
-                    <div className="w-[14%] text-base border-x px-1 font-bold text-center bg-red-100 flex items-center justify-center gap-4">
-                        <TrashIcon 
-                            className="size-6 cursor-pointer hover-text-red-1"
-                            onClick={() => setConfirmDeleteOpen(true) }
-                        />
-                        <PencilSquareIcon className="size-6 cursor-pointer hover-text-blue-1"/>
-                    </div>
-                </div>
+                <FlexTable
+                    columns={[
+                        { 
+                            key: "name", label: "NOMBRES", className: "w-[30%] bg-white",
+                            render: (user) => (
+                                <div className="text-base font-bold text-left truncate">
+                                    {user.name} {user.lastname || ''}
+                                </div>
+                            )
+                        },
+                        {
+                            key: "email", label: "CORREO", className: "flex-grow bg-gray-100",
+                            render: (user) => (
+                                <div className="text-base text-center">
+                                    {user.email || 'Sin email'}
+                                </div>
+                            )
+                        },
+                        {
+                            key: "username", label: "USERNAME", className: "w-[20%] bg-blue-100",
+                            render: (user) => (
+                                <div className="text-base text-center">
+                                    {user.username}
+                                </div>
+                            )
+                        },
+                        {
+                            key: "roles", label: "ROL(ES)", className: "w-[14%] bg-orange-100",
+                            render: (user) => (
+                                <div className="text-sm text-center font-bold">
+                                    {user.roles?.join(' | ')}
+                                </div>
+                            )
+                        },
+                        {
+                            key: "actions", label: "ACCIONES", className: "w-[8%] bg-red-100",
+                            render: (user) => (
+                                <div className="flex items-center justify-center gap-4">
+                                    <PencilSquareIcon 
+                                        className="size-6 cursor-pointer hover-text-blue-1"
+                                        onClick={() => {
+                                            setUserToEdit(user);
+                                            setCreateUserModalOpen(true);
+                                        }}
+                                    />
+                                </div>
+                            )
+                        }
+                    ]}
+                    data={usersData}
+                    isLoading={usersLoading}
+                    hoverSelect={false}
+                />
             </div>
         </section>
-        {/* <CreateUserModal isOpen={isCreateUserModalOpen} onClose={() => setCreateUserModalOpen(false)} /> */}
+        <CreateUserModal 
+            isOpen={isCreateUserModalOpen} 
+            onClose={() => {
+                setCreateUserModalOpen(false);
+                setUserToEdit(null);
+            }} 
+            rolesData={rolesData}
+            userToEdit={userToEdit}
+            reloadList={reloadUsers}
+        />
         <ConfirmDelete 
             isOpen={isConfirmDeleteOpen} 
             onClose={() => setConfirmDeleteOpen(false) }

@@ -1,18 +1,21 @@
 
 // src/stores/exchange/exchangeSlice.ts
 import { createSlice, PayloadAction, isAnyOf } from '@reduxjs/toolkit';
-import { saveExchange, findActive, type Exchange } from './exchangeActions';
+import { saveExchange, findActive } from './exchangeActions';
+import { type ExchangeWithCoin } from '@/api/exchange.service';
 
 type ExchangeState = {
-  current: Exchange | null;   // tasa actual
+  current: ExchangeWithCoin | null;   // tasa actual
   loading: boolean;
   error: string | null;
+  isExchangeSettingOpen: boolean;     // controla si el modal está abierto
 };
 
 const initialState: ExchangeState = {
   current: null,
   loading: false,
   error: null,
+  isExchangeSettingOpen: false,
 };
 
 const exchangeSlice = createSlice({
@@ -22,6 +25,9 @@ const exchangeSlice = createSlice({
     clearExchange(state) {
       state.current = null;
       state.error = null;
+    },
+    setIsExchangeSettingOpen(state, action: PayloadAction<boolean>) {
+      state.isExchangeSettingOpen = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -35,7 +41,7 @@ const exchangeSlice = createSlice({
       )
       .addMatcher(
         isAnyOf(saveExchange.fulfilled, findActive.fulfilled),
-        (state, action: PayloadAction<ExchangeData>) => {
+        (state, action: PayloadAction<any>) => {
           state.loading = false;
           state.current = action.payload;
         }
@@ -50,5 +56,5 @@ const exchangeSlice = createSlice({
   },
 });
 
-export const { clearExchange } = exchangeSlice.actions;
+export const { clearExchange, setIsExchangeSettingOpen } = exchangeSlice.actions;
 export default exchangeSlice.reducer;
