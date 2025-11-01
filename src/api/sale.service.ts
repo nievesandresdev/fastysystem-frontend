@@ -17,7 +17,7 @@ export type SaleItem = {
 export interface SaveSaleRequest {
   clientId: number | null;
   exchangeId: number;
-  items: SaleItem[];
+  itemslist: SaleItem[];
   payments: Record<string, { amount: string; reference?: string; concept?: string }>;
   change: Record<string, { amount: string; reference?: string; concept?: string }>;
   totalLocal: string;
@@ -45,6 +45,7 @@ export interface SalesStatsResponse {
 
 export interface Sale {
   id: number;
+  userId: number;
   clientId: number | null;
   exchangeId: number;
   totalLocal: string;
