@@ -52,7 +52,7 @@ export default function Modal({ isOpen, onClose, title, styles = stylesDefault, 
           <XCircleIcon onClick={onClose} className="size-6 cursor-pointer"/>
         </div>
         {/* body */}
-        <div className={`pt-4 p-4 bg-zinc-200 rounded-b-[4px] overflow-y-auto ${styles?.bodyMaxHeight}`}>
+        <div className={`pt-4 p-4 bg-zinc-200 rounded-b-[4px] overflow-y-auto max-h-[88vh]`}>
           {children}
         </div>
         {foot}
