@@ -56,14 +56,14 @@ export default function MainMenu(){
                     to={REPORT_ROUTES.ROOT}
                 >
                     <GlobeAmericasIcon className="size-8 mx-auto text-yellow-1" />
-                    <h1 className="text-xs font-semibold text-yellow-1">TABLERO</h1>
+                    <h1 className="text-sm font-semibold text-yellow-1">REPORTE</h1>
                 </Link>
                 <Link
                     className={`${currentPath == BILLER_ROUTES.ROOT ? 'bg-orange-1' : 'bg-blue-1'} w-20 hover-bg-orange-1 shadow-1 rounded-[4px] py-1.5 text-center cursor-pointer`}
                     to={BILLER_ROUTES.ROOT}
                 >
                     <NumberedListIcon className="size-8 mx-auto text-yellow-1" />
-                    <h1 className="text-xs font-semibold text-yellow-1">FACTURAR</h1>
+                    <h1 className="text-sm font-semibold text-yellow-1">FACTURAR</h1>
                 </Link>
                 {hasAdminRole && (
                     <Link 
@@ -71,7 +71,7 @@ export default function MainMenu(){
                         to={SETTING_ROUTES.ROOT}
                     >
                         <Cog6ToothIcon className="size-8 mx-auto text-yellow-1" />
-                        <h1 className="text-xs font-semibold text-yellow-1">CONFIG</h1>
+                        <h1 className="text-sm font-semibold text-yellow-1">CONFIG</h1>
                     </Link>
                 )}
                 <Link 

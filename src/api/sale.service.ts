@@ -61,10 +61,77 @@ export interface SalesStatsFilters {
   endDate: string;
 }
 
+export interface MonthlyReportData {
+  month: string;
+  totalProducts: number;
+  totalProfit: number;
+  totalExpenses: number;
+}
+
+export interface MonthlyReportResponse {
+  ok: boolean;
+  status: number;
+  code: string;
+  message: string;
+  data: MonthlyReportData[];
+}
+
 export function saveSaleApi(data: SaveSaleRequest) {
   return post<SaveSaleRequest>(path+"/save", data);
 }
 
 export function getSalesStatsApi(filters: SalesStatsFilters) {
   return get<SalesStatsResponse>(path+"/stats", filters);
+}
+
+export function getMonthlyReportApi(filters: SalesStatsFilters) {
+  return get<MonthlyReportResponse>(path+"/monthly-report", filters);
+}
+
+export interface CurrentPeriodStatsResponse {
+  ok: boolean;
+  status: number;
+  code: string;
+  message: string;
+  data: {
+    startDate: string;
+    endDate: string;
+    transactionCount: number;
+    totalLocal: number;
+    totalExchange: number;
+  };
+}
+
+export function getCurrentPeriodStatsApi() {
+  return get<CurrentPeriodStatsResponse>(path+"/current-period");
+}
+
+export interface TopProduct {
+  id: number;
+  name: string;
+  codigo: string;
+  totalSold: number;
+}
+
+export interface LowStockProduct {
+  id: number;
+  name: string;
+  codigo: string;
+  stock: number;
+  minStock: number;
+}
+
+export interface TopProductsAndLowStockResponse {
+  ok: boolean;
+  status: number;
+  code: string;
+  message: string;
+  data: {
+    topProducts: TopProduct[];
+    lowStockProducts: LowStockProduct[];
+  };
+}
+
+export function getTopProductsAndLowStockApi() {
+  return get<TopProductsAndLowStockResponse>(path+"/top-products-low-stock");
 }
